@@ -110,15 +110,44 @@ task :gtest,[:output] do |t,args|
     cd orgin_dir
 end
 
-task :gmock,[output] do |t,args|
+task :gmock,[:output] do |t,args|
+    orgin_dir = getwd()
+    # compile and install
+    base = extract_file(options[:gmock])
+    cd "#{base}/make"
+    sh "make"
     
+    makedirs "#{args[:output]}/#{base}/include"
+    makedirs "#{args[:output]}/#{base}/lib"
+
+    cp_r "gmock_main.a","#{args[:output]}/#{base}/lib/libgmock.a"
+    
+    cd ".."
+    cp_r "include/gmock","#{args[:output]}/#{base}/include"
+    
+    cd "gtest"
+    cp_r "include/gtest","#{args[:output]}/#{base}/include"
+    
+    cd ".."
+    cd ".."
+    
+    rm_rf "#{base}"
+    
+    # make link
+    sym_name = base.split("-")[0]
+    cd "#{args[:output]}"
+    ln_sf "#{args[:output]}/#{base}",sym_name
+    
+    # return 
+    cd orgin_dir
 end
 
 desc "install all packages [$HOME/hpgc]"
 task :install,[:output] do |t,args|
     #sh "rake simple[gprotobuf,#{args[:output]}]"
     #sh "rake gflags[#{args[:output]}]"
-    sh "rake simple[gmock,#{args[:output]}]"
+    sh "rake gmock[#{args[:output]}]"
+    
     #sh "rake gtest[#{args[:output]}]"
     #sh "rake simple[glog,#{args[:output]}]"
 end
