@@ -16,6 +16,7 @@ options ={
     :glog        => 'glog-0.3.3.tar.gz'
     
 }
+
 def extract_file name
     suffix = File.extname(name)
     base_name = File.basename(name,".tar#{suffix}")
@@ -31,15 +32,30 @@ def extract_file name
 end
 
 desc "run rake protobuf[target directory] such as rake protobuf[$HOME/hpgc]"
-task :protobuf,[:output] do |t,args|
-    base = extract_file(options[:gprotobuf])
+task :simple ,[:target,:output] do |t,args|
+    orgin_dir = getwd()
+    
+    # compile and install
+    base = extract_file(options[args[:target].to_sym])
     cd "#{base}"
     sh "./configure --prefix=#{args[:output]}/#{base}"
     sh "make"
     sh "make install"
-    ln_sf "#{args[:output]}/#{base}","protobuf"
+    
+    # clean 
     cd ".."
     rm_rf "#{base}"
+    
+    # make link
+    sym_name = base.split("-")[0]
+    cd "#{args[:output]}"
+    ln_sf "#{args[:output]}/#{base}",sym_name
+    
+    # return 
+    cd orgin_dir
 end
 
-task :default => :protobuf
+desc "install all packages"
+task :install,[:output] do |t,args|
+    sh "rake simple[gprotobuf,#{args[:output]}]"
+end
