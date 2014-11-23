@@ -1,9 +1,7 @@
-libraries = FileList.new("*.bz2","*.gz")
-
 options ={
     :geos        => 'geos-3.4.2.tar.bz2',
     :proj4       => 'proj-4.8.0.tar.gz',
-    :geos        => 'geos-3.4.2.tar.bz2',
+    :gdal        => 'gdal-1.11.0.tar.gz',
     
     :postgresql  => 'postgresql-9.3.4.tar.bz2',
     :postgis     => 'postgis-2.1.3.tar.gz',
@@ -21,59 +19,27 @@ options ={
 def extract_file name
     suffix = File.extname(name)
     base_name = File.basename(name,".tar#{suffix}")
-    #case File.extname(name)
-    #when '.bz2'
-    #     sh "tar jxvf #{name}"
-    #when '.gz'
-    #     sh "tar zxvf #{name}"
-    #when '.zip'
-    #     sh "unzip #{name}"
-    #end
-    #base_name
-    p base_name
-    p suffix
+    case File.extname(name)
+    when '.bz2'
+        sh "tar jxvf #{name}" 
+    when '.gz'
+        sh "tar zxvf #{name}" 
+    when '.zip'
+        sh "unzip #{name}" 
+    end
+    base_name
 end
 
-desc "geos library"
-task :geos do
-    p extract_file('gv-3.4.2.tar.bz2')
-    # geos = extract_file(options[:geos])
-    # sh "cd #{geos}"
-    # sh "./configure --prefix=/opt/#{geos}"
-    # sh "make"
-    # sh "make install"
-    # sh "ln -sf /opt/#{geos} geos"
-    # sh "cd .."
+desc "run rake protobuf[target directory] such as rake protobuf[$HOME/hpgc]"
+task :protobuf,[:output] do |t,args|
+    base = extract_file(options[:gprotobuf])
+    cd "#{base}"
+    sh "./configure --prefix=#{args[:output]}/#{base}"
+    sh "make"
+    sh "make install"
+    ln_sf "#{args[:output]}/#{base}","protobuf"
+    cd ".."
+    rm_rf "#{base}"
 end
 
-desc "proj4 library"
-task :proj4 do
-    
-end
-
-desc "postgresql db"
-task :postgresql do
-    
-end
-
-desc "geo extention on postgresql"
-task :postgis => [:postgresql,:proj4,:geos] do
-    
-end
-
-desc "geo-spatial format library"
-task :gdal => [:postgresql,:geos,:proj4,:postgis] do
-    
-end
-
-desc "message passing interface library"
-task :mpi do
-    
-end
-
-desc "google protobuf library"
-task :protobuf do
-    
-end
-
-task :default => [:gdal,:mpi,:postgis,:protobuf]
+task :default => :protobuf
