@@ -55,12 +55,39 @@ task :simple ,[:target,:output] do |t,args|
     cd orgin_dir
 end
 
+task :gflags,[:output] do |t,args|
+    orgin_dir = getwd()
+    # compile and install
+    base = extract_file(options[:gflags])
+    cd "#{base}"
+    sh "cmake ."
+    sh "make"
+    
+    makedirs "#{args[:output]}/#{base}"
+    
+    cp_r "include","#{args[:output]}/#{base}"
+    cp_r "lib","#{args[:output]}/#{base}"
+    
+    # clean 
+    cd ".."
+    rm_rf "#{base}"
+    
+    # make link
+    sym_name = base.split("-")[0]
+    cd "#{args[:output]}"
+    ln_sf "#{args[:output]}/#{base}",sym_name
+    
+    # return 
+    cd orgin_dir
+    
+end
+
 desc "install all packages [$HOME/hpgc]"
 task :install,[:output] do |t,args|
-    sh "rake simple[gprotobuf,#{args[:output]}]"
-    sh "rake simple[gflags,#{args[:output]}]"
+    #sh "rake simple[gprotobuf,#{args[:output]}]"
+    #sh "rake gflags[#{args[:output]}]"
     sh "rake simple[gmock,#{args[:output]}]"
-    sh "rake simple[gperf,#{args[:output]}]"
-    sh "rake simple[gtest,#{args[:output]}]"
+    #sh "rake simple[gperf,#{args[:output]}]"
+    #sh "rake simple[gtest,#{args[:output]}]"
     sh "rake simple[glog,#{args[:output]}]"
 end
