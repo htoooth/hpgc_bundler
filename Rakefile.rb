@@ -18,16 +18,17 @@ options ={
 }
 
 def extract_file name
-    suffix = File.extname(name)
-    base_name = File.basename(name,".tar#{suffix}")
-    case File.extname(name)
-    when '.bz2'
-        sh "tar jxvf #{name}" 
-    when '.gz'
-        sh "tar zxvf #{name}" 
-    when '.zip'
-        sh "unzip #{name}" 
-    end
+    
+    action = {}
+    action['.tar.bz2'] = 'tar -jxvf'
+    action['.tar.gz'] = 'tar -zxvf'
+    action['.bz2'] = 'bzip2 -d'
+    action['.7z'] = 'p7zip -d'
+    action['.zip'] = 'unzip'
+    
+    extension = name.scan(/\.[a-z]+\S+/).join
+    base_name = File.basename(name,extension)
+    sh "#{action[extension]} #{name}"
     base_name
 end
 
@@ -82,12 +83,38 @@ task :gflags,[:output] do |t,args|
     
 end
 
+task :gtest,[:output] do |t,args|
+    orgin_dir = getwd()
+    # compile and install
+    base = extract_file(options[:gtest])
+    cd "#{base}"
+    sh "cmake ."
+    sh "make"
+    
+    makedirs "#{args[:output]}/#{base}"
+    makedirs "#{args[:output]}/#{base}/lib"
+    
+    cp_r "include","#{args[:output]}/#{base}"
+    cp_r %w(libgtest.a libgtest_main.a),"#{args[:output]}/#{base}/lib"
+    
+    # clean 
+    cd ".."
+    rm_rf "#{base}"
+    
+    # make link
+    sym_name = base.split("-")[0]
+    cd "#{args[:output]}"
+    ln_sf "#{args[:output]}/#{base}",sym_name
+    
+    # return 
+    cd orgin_dir
+end
+
 desc "install all packages [$HOME/hpgc]"
 task :install,[:output] do |t,args|
-    #sh "rake simple[gprotobuf,#{args[:output]}]"
-    #sh "rake gflags[#{args[:output]}]"
-    sh "rake simple[gmock,#{args[:output]}]"
-    #sh "rake simple[gperf,#{args[:output]}]"
-    #sh "rake simple[gtest,#{args[:output]}]"
+    sh "rake simple[gprotobuf,#{args[:output]}]"
+    sh "rake gflags[#{args[:output]}]"
+    #sh "rake simple[gmock,#{args[:output]}]"
+    sh "rake gtest[#{args[:output]}]"
     sh "rake simple[glog,#{args[:output]}]"
 end
