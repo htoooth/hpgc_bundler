@@ -31,7 +31,7 @@ def extract_file name
     base_name
 end
 
-desc "run rake protobuf[target directory] such as rake protobuf[$HOME/hpgc]"
+desc "run simple task "
 task :simple ,[:target,:output] do |t,args|
     orgin_dir = getwd()
     
@@ -55,7 +55,12 @@ task :simple ,[:target,:output] do |t,args|
     cd orgin_dir
 end
 
-desc "install all packages"
+desc "install all packages [$HOME/hpgc]"
 task :install,[:output] do |t,args|
     sh "rake simple[gprotobuf,#{args[:output]}]"
+    sh "rake simple[gflags,#{args[:output]}]"
+    sh "rake simple[gmock,#{args[:output]}]"
+    sh "rake simple[gperf,#{args[:output]}]"
+    sh "rake simple[gtest,#{args[:output]}]"
+    sh "rake simple[glog,#{args[:output]}]"
 end
