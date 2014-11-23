@@ -110,11 +110,15 @@ task :gtest,[:output] do |t,args|
     cd orgin_dir
 end
 
+task :gmock,[output] do |t,args|
+    
+end
+
 desc "install all packages [$HOME/hpgc]"
 task :install,[:output] do |t,args|
-    sh "rake simple[gprotobuf,#{args[:output]}]"
-    sh "rake gflags[#{args[:output]}]"
-    #sh "rake simple[gmock,#{args[:output]}]"
-    sh "rake gtest[#{args[:output]}]"
-    sh "rake simple[glog,#{args[:output]}]"
+    #sh "rake simple[gprotobuf,#{args[:output]}]"
+    #sh "rake gflags[#{args[:output]}]"
+    sh "rake simple[gmock,#{args[:output]}]"
+    #sh "rake gtest[#{args[:output]}]"
+    #sh "rake simple[glog,#{args[:output]}]"
 end
