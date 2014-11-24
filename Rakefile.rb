@@ -1,6 +1,6 @@
 options ={
     :geos        => 'geos-3.4.2.tar.bz2',
-    :proj4       => 'proj-4.8.0.tar.gz',
+    :proj        => 'proj-4.8.0.tar.gz',
     :gdal        => 'gdal-1.11.0.tar.gz',
     
     :postgresql  => 'postgresql-9.3.4.tar.bz2',
@@ -142,12 +142,96 @@ task :gmock,[:output] do |t,args|
     cd orgin_dir
 end
 
+task :gdal ,[:output] do |t,args|
+     orgin_dir = getwd()
+    
+    # compile and install
+    base = extract_file(options[:gdal])
+    cd "#{base}"
+    sh %Q{./configure --prefix=#{args[:output]}/#{base} \
+--with-geos=#{args[:output]}/geos/bin/geos-config \
+--with-pg=#{args[:output]}/postgresql/bin/pg_config \
+--with-static-proj4=#{args[:output]}/proj \
+--with-python
+}
+        
+    sh "make"
+    sh "make install"
+    
+    # clean 
+    cd ".."
+    rm_rf "#{base}"
+    
+    # make link
+    sym_name = base.split("-")[0]
+    cd "#{args[:output]}"
+    ln_sf "#{args[:output]}/#{base}",sym_name
+    
+    # return 
+    cd orgin_dir
+end
+
+task :postgresql ,[:output] do |t,args|
+    orgin_dir = getwd()
+    
+    # compile and install
+    base = extract_file(options[:postgresql])
+    cd "#{base}"
+    sh "./configure --prefix=#{args[:output]}/#{base} --without-readline --without-zlib"
+    sh "make"
+    sh "make install"
+    
+    # clean 
+    cd ".."
+    rm_rf "#{base}"
+    
+    # make link
+    sym_name = base.split("-")[0]
+    cd "#{args[:output]}"
+    ln_sf "#{args[:output]}/#{base}",sym_name
+    
+    # return 
+    cd orgin_dir
+end
+
+task :postgis ,[:output] do |t,args|
+     orgin_dir = getwd()
+    
+    # compile and install
+    base = extract_file(options[:postgis])
+    cd "#{base}"
+    sh %Q{./configure --prefix=#{args[:output]}/#{base} \
+--with-geosconfig=#{args[:output]}/geos/bin/geos-config \
+--with-pgconfig=#{args[:output]}/postgresql/bin/pg_config \
+--with-projdir=#{args[:output]}/proj
+}
+    sh "make"
+    sh "make install"
+    
+    # clean 
+    cd ".."
+    rm_rf "#{base}"
+    
+    # make link
+    sym_name = base.split("-")[0]
+    cd "#{args[:output]}"
+    ln_sf "#{args[:output]}/#{base}",sym_name
+    
+    # return 
+    cd orgin_dir
+end
+
 desc "install all packages [$HOME/hpgc]"
 task :install,[:output] do |t,args|
-    #sh "rake simple[gprotobuf,#{args[:output]}]"
-    #sh "rake gflags[#{args[:output]}]"
+    sh "rake simple[gprotobuf,#{args[:output]}]"
+    sh "rake gflags[#{args[:output]}]"
     sh "rake gmock[#{args[:output]}]"
+    sh "rake simple[glog,#{args[:output]}]"
     
-    #sh "rake gtest[#{args[:output]}]"
-    #sh "rake simple[glog,#{args[:output]}]"
+    sh "rake simple[geos,#{args[:output]}]"
+    sh "rake simple[proj,#{args[:output]}]"
+    sh "rake postgresql[#{args[:output]}]"
+    sh "rake gdal[#{args[:output]}]"
+    sh "rake postgis[#{args[:output]}]"
+    sh "rake simple[mpi,#{args[:output]}]"
 end
