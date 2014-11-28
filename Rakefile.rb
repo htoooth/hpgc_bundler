@@ -1,5 +1,5 @@
 options ={
-    :geos        => 'geos-3.4.2.tar.bz2',
+    :geos        => 'geos-3.3.9.tar.bz2',
     :proj        => 'proj-4.8.0.tar.gz',
     :gdal        => 'gdal-1.11.0.tar.gz',
     
