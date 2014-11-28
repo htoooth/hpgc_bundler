@@ -18,9 +18,7 @@ type `rake install[you/path]`
 
 ```
 remove geos 3.4.2 because it has a error when compile postgis
-
 remove ssdb because don't need it.
-
 remove gpref because don't need it.
 ```
 
