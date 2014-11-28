@@ -223,15 +223,16 @@ end
 
 desc "install all packages [$HOME/hpgc]"
 task :install,[:output] do |t,args|
-    sh "rake simple[gprotobuf,#{args[:output]}]"
-    sh "rake gflags[#{args[:output]}]"
-    sh "rake gmock[#{args[:output]}]"
-    sh "rake simple[glog,#{args[:output]}]"
+    Rake::Task['simple'].invoke('gprotobuf',args.output)
+    Rake::Task['gflags'].invoke(args.output)
+    Rake::Task['gmock'].invoke(args.output)
+    Rake::Task['simple'].invoke('glog',args.output)
     
-    sh "rake simple[geos,#{args[:output]}]"
-    sh "rake simple[proj,#{args[:output]}]"
-    sh "rake postgresql[#{args[:output]}]"
-    sh "rake gdal[#{args[:output]}]"
-    sh "rake postgis[#{args[:output]}]"
-    sh "rake simple[mpi,#{args[:output]}]"
+    Rake::Task['simple'].invoke('geos',args.output)
+    Rake::Task['simple'].invoke('proj',args.output)
+
+    Rake::Task['postgresql'].invoke(args.output)
+    Rake::Task['gdal'].invoke(args.output)
+    Rake::Task['postgis'].invoke(args.output)
+    Rake::Task['simple'].invoke('mpi',args.output)
 end
