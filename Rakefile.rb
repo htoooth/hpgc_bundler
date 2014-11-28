@@ -1,6 +1,7 @@
 options ={
     :geos        => 'geos-3.3.9.tar.bz2',
     :proj        => 'proj-4.8.0.tar.gz',
+    :jsonc       => 'jsonc-0.12.zip',
     :gdal        => 'gdal-1.11.0.tar.gz',
     
     :postgresql  => 'postgresql-9.3.4.tar.bz2',
@@ -209,7 +210,10 @@ task :postgis ,[:output] do |t,args|
     sh %Q{./configure --prefix=#{args[:output]}/#{base} \
 --with-geosconfig=#{args[:output]}/geos/bin/geos-config \
 --with-pgconfig=#{args[:output]}/postgresql/bin/pg_config \
---with-projdir=#{args[:output]}/proj
+--with-projdir=#{args[:output]}/proj \
+--with-projdir=#{args[:output]}/gdal/bin/gdal-config \
+--with-raster --with-topology \
+--with-jsondir=#{args[:output]}/jsonc 
 }
     sh "make -j4"
     sh "make install"
@@ -227,20 +231,52 @@ task :postgis ,[:output] do |t,args|
     cd orgin_dir
 end
 
+task :jsonc,[:output] do |t,args|
+    orgin_dir = getwd()
+    
+    # compile and install
+    base = extract_file(options[:jsonc])
+    cd "#{base}"
+    sh "sh autogen.sh"
+    sh "./configure --prefix=#{args[:output]}/#{base}"
+    sh "make -j4"
+    sh "make install"
+    
+    # clean 
+    cd ".."
+    rm_rf "#{base}"
+    
+    # make link
+    sym_name = base.split("-")[0]
+    cd "#{args[:output]}"
+    ln_sf "#{args[:output]}/#{base}",sym_name
+    
+end
+
 desc "install all packages [$HOME/hpgc]"
 task :install,[:output] do |t,args|
     Rake::Task['simple'].invoke('mpi',args.output)
+    Rake::Task['simple'].reenable
+    
     Rake::Task['simple'].invoke('gprotobuf',args.output)
+    Rake::Task['simple'].reenable
     
     Rake::Task['gflags'].invoke(args.output)
     Rake::Task['gmock'].invoke(args.output)
+    
     Rake::Task['simple'].invoke('glog',args.output)
+    Rake::Task['simple'].reenable
     
     Rake::Task['simple'].invoke('geos',args.output)
+    Rake::Task['simple'].reenable
+    
     Rake::Task['simple'].invoke('proj',args.output)
+    Rake::Task['simple'].reenable
+    
     Rake::Task['postgresql'].invoke(args.output)
     Rake::Task['gdal'].invoke(args.output)
     
+    Rake::Task['jsonc'].invoke(args.output)
     Rake::Task['postgis'].invoke(args.output)
     
 end
