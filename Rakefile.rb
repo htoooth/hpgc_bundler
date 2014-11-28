@@ -32,7 +32,7 @@ def extract_file name
     base_name
 end
 
-desc "run simple task "
+desc "run simple task suck as glog,geos,proj,mpi"
 task :simple ,[:target,:output] do |t,args|
     orgin_dir = getwd()
     
@@ -56,6 +56,7 @@ task :simple ,[:target,:output] do |t,args|
     cd orgin_dir
 end
 
+desc "install gflags"
 task :gflags,[:output] do |t,args|
     orgin_dir = getwd()
     # compile and install
@@ -83,6 +84,7 @@ task :gflags,[:output] do |t,args|
     
 end
 
+desc "install gtest"
 task :gtest,[:output] do |t,args|
     orgin_dir = getwd()
     # compile and install
@@ -110,6 +112,7 @@ task :gtest,[:output] do |t,args|
     cd orgin_dir
 end
 
+desc "install gmock"
 task :gmock,[:output] do |t,args|
     orgin_dir = getwd()
     # compile and install
@@ -142,6 +145,7 @@ task :gmock,[:output] do |t,args|
     cd orgin_dir
 end
 
+desc "install gdal"
 task :gdal ,[:output] do |t,args|
      orgin_dir = getwd()
     
@@ -171,6 +175,7 @@ task :gdal ,[:output] do |t,args|
     cd orgin_dir
 end
 
+desc "install postgresql"
 task :postgresql ,[:output] do |t,args|
     orgin_dir = getwd()
     
@@ -194,6 +199,7 @@ task :postgresql ,[:output] do |t,args|
     cd orgin_dir
 end
 
+desc "install postgis"
 task :postgis ,[:output] do |t,args|
      orgin_dir = getwd()
     
