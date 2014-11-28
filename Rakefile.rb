@@ -12,7 +12,9 @@ options ={
     :gflags      => 'gflags-2.1.1.tar.gz',
     :gmock       => 'gmock-1.7.0.zip',
     :gtest       => 'gtest-1.7.0.zip',
-    :glog        => 'glog-0.3.3.tar.gz'
+    :glog        => 'glog-0.3.3.tar.gz',
+    
+    :boost       => 'boost_1_57_0.tar.bz2'
     
 }
 
@@ -228,6 +230,31 @@ task :postgis ,[:output] do |t,args|
     cd orgin_dir
 end
 
+desc "install boost"
+task :boost,[:output] do |t,args|
+    orgin_dir = getwd()
+    
+    # compile and install
+    base = extract_file(options[:boost])
+    cd "#{base}"
+    
+    sh "./bootstrap.sh"
+    sh "./b2 --build-type=complete --layout=tagged --build-dir=boost_temp --prefix=#{args.output}"
+    
+    # clean 
+    cd ".."
+    rm_rf "#{base}"
+    
+    # make link
+    sym_name = base.split("_",2)[0]
+    cd "#{args[:output]}"
+    ln_sf "#{args[:output]}/#{base}",sym_name
+    
+    # return 
+    cd orgin_dir
+    
+end
+
 desc "install all packages [$HOME/hpgc]"
 task :install,[:output] do |t,args|
     Rake::Task['simple'].invoke('mpi',args.output)
@@ -253,4 +280,5 @@ task :install,[:output] do |t,args|
     
     Rake::Task['postgis'].invoke(args.output)
     
+    Rake::Task['boost'].invoke(args.output)
 end

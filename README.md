@@ -14,6 +14,12 @@ type `rake install[you/path]`
 
 ## change log
 
+* 20141128_1701
+
+```
+add boost 1.57.0
+```
+
 * 20141128_1604
 
 ```
