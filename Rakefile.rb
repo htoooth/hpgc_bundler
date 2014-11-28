@@ -4,7 +4,7 @@ options ={
     :gdal        => 'gdal-1.11.0.tar.gz',
     
     :postgresql  => 'postgresql-9.3.4.tar.bz2',
-    :postgis     => 'postgis-2.1.3.tar.gz',
+    :postgis     => 'postgis-2.1.4.tar.gz',
     
     :mpi         => 'openmpi-1.6.5.tar.bz2',
     
@@ -32,7 +32,7 @@ def extract_file name
     base_name
 end
 
-desc "run simple task suck as glog,geos,proj,mpi"
+desc "run simple install task suck as glog,geos,proj,mpi"
 task :simple ,[:target,:output] do |t,args|
     orgin_dir = getwd()
     
@@ -229,16 +229,18 @@ end
 
 desc "install all packages [$HOME/hpgc]"
 task :install,[:output] do |t,args|
+    Rake::Task['simple'].invoke('mpi',args.output)
     Rake::Task['simple'].invoke('gprotobuf',args.output)
+    
     Rake::Task['gflags'].invoke(args.output)
     Rake::Task['gmock'].invoke(args.output)
     Rake::Task['simple'].invoke('glog',args.output)
     
     Rake::Task['simple'].invoke('geos',args.output)
     Rake::Task['simple'].invoke('proj',args.output)
-
     Rake::Task['postgresql'].invoke(args.output)
     Rake::Task['gdal'].invoke(args.output)
+    
     Rake::Task['postgis'].invoke(args.output)
-    Rake::Task['simple'].invoke('mpi',args.output)
+    
 end
