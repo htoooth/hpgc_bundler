@@ -40,7 +40,7 @@ task :simple ,[:target,:output] do |t,args|
     base = extract_file(options[args[:target].to_sym])
     cd "#{base}"
     sh "./configure --prefix=#{args[:output]}/#{base}"
-    sh "make"
+    sh "make -j4"
     sh "make install"
     
     # clean 
@@ -62,7 +62,7 @@ task :gflags,[:output] do |t,args|
     base = extract_file(options[:gflags])
     cd "#{base}"
     sh "cmake ."
-    sh "make"
+    sh "make -j4"
     
     makedirs "#{args[:output]}/#{base}"
     
@@ -89,7 +89,7 @@ task :gtest,[:output] do |t,args|
     base = extract_file(options[:gtest])
     cd "#{base}"
     sh "cmake ."
-    sh "make"
+    sh "make -j4"
     
     makedirs "#{args[:output]}/#{base}"
     makedirs "#{args[:output]}/#{base}/lib"
@@ -115,7 +115,7 @@ task :gmock,[:output] do |t,args|
     # compile and install
     base = extract_file(options[:gmock])
     cd "#{base}/make"
-    sh "make"
+    sh "make -j4"
     
     makedirs "#{args[:output]}/#{base}/include"
     makedirs "#{args[:output]}/#{base}/lib"
@@ -155,7 +155,7 @@ task :gdal ,[:output] do |t,args|
 --with-python
 }
         
-    sh "make"
+    sh "make -j4"
     sh "make install"
     
     # clean 
@@ -178,7 +178,7 @@ task :postgresql ,[:output] do |t,args|
     base = extract_file(options[:postgresql])
     cd "#{base}"
     sh "./configure --prefix=#{args[:output]}/#{base} --without-readline --without-zlib"
-    sh "make"
+    sh "make -j4"
     sh "make install"
     
     # clean 
@@ -205,7 +205,7 @@ task :postgis ,[:output] do |t,args|
 --with-pgconfig=#{args[:output]}/postgresql/bin/pg_config \
 --with-projdir=#{args[:output]}/proj
 }
-    sh "make"
+    sh "make -j4"
     sh "make install"
     
     # clean 
