@@ -11,7 +11,6 @@ options ={
     :gprotobuf   => 'protobuf-2.5.0.tar.bz2',
     :gflags      => 'gflags-2.1.1.tar.gz',
     :gmock       => 'gmock-1.7.0.zip',
-    :gperf       => 'gperftools-2.2.tar.gz',
     :gtest       => 'gtest-1.7.0.zip',
     :glog        => 'glog-0.3.3.tar.gz'
     
