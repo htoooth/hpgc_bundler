@@ -6,7 +6,7 @@ options ={
     :postgresql  => 'postgresql-9.3.4.tar.bz2',
     :postgis     => 'postgis-2.1.4.tar.gz',
     
-    :mpi         => 'openmpi-1.6.5.tar.bz2',
+    :mpi         => 'openmpi-1.8.3.tar.gz',
     
     :gprotobuf   => 'protobuf-2.5.0.tar.bz2',
     :gflags      => 'gflags-2.1.1.tar.gz',

@@ -14,6 +14,12 @@ type `rake install[you/path]`
 
 ## change log
 
+* 20141129_1250
+
+```
+update openmpi from 1.6.5 to 1.8.3
+```
+
 * 20141128_1701
 
 ```
@@ -37,10 +43,10 @@ update postgis-2.1.4.tar.gz
 * 20140504_1540
 
 ```
-geos-3.4.2.tar.bz2
-proj-4.8.0.tar.gz
-gdal-1.11.0.tar.gz
-openmpi-1.8.1.tar.gz
+add geos-3.4.2.tar.bz2
+add proj-4.8.0.tar.gz
+add gdal-1.11.0.tar.gz
+add openmpi-1.8.1.tar.gz
 ```
 
 * 20141124_1401
