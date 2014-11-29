@@ -282,3 +282,16 @@ task :install,[:output] do |t,args|
     
     Rake::Task['boost'].invoke(args.output)
 end
+
+desc "update project"
+task :update do
+    sh 'git pull' 
+end
+
+desc "commit project" 
+task :commit do
+    sh "git add -A"
+    sh "git commit -m \"update file\" "
+    sh "git push -u origin master"
+end
+
