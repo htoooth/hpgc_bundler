@@ -239,7 +239,7 @@ task :boost,[:output] do |t,args|
     cd "#{base}"
     
     sh "./bootstrap.sh"
-    sh "./b2 --build-type=complete --layout=tagged --build-dir=boost_temp --prefix=#{args.output} install"
+    sh "./b2 --build-type=complete --layout=tagged --build-dir=boost_temp install --prefix=#{args.output}"
     
     # clean 
     cd ".."
