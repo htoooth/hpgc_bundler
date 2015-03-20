@@ -1,3 +1,5 @@
+require 'inifile'
+
 options ={
     :geos        => 'geos-3.3.9.tar.bz2',
     :proj        => 'proj-4.8.0.tar.gz',
@@ -7,6 +9,7 @@ options ={
     :postgis     => 'postgis-2.1.4.tar.gz',
     
     :mpi         => 'openmpi-1.8.3.tar.gz',
+    :mpi4py      => 'mpi4py-1.3.1.tar.gz',
     
     :gprotobuf   => 'protobuf-2.5.0.tar.bz2',
     :gflags      => 'gflags-2.1.1.tar.gz',
@@ -255,32 +258,60 @@ task :boost,[:output] do |t,args|
     
 end
 
+desc "install mpi4py"
+task :mpi4py,[:output] do |t,args|
+    orgin_dir = getwd()
+    
+    # compile and install
+    base = extract_file(options[:mpi4py])
+    cd = "#{base}"
+    
+    # set my mpi ini file 
+    mpi_ini = IniFile.load("mpi.cfg")
+    mpi_ini["mympi"]["include_dirs"]= "#{args.output}/openmpi/include}"
+    mpi_ini["mympi"]["libraries"]= "mpi"
+    mpi_ini["mympi"]["library_dirs"]= "#{args.output}/openmpi/lib}"
+    mpi_ini["mympi"]["runtime_library_dirs"]= "#{args.output}/openmpi/lib}"
+    
+    mpi_ini.save
+    
+    ssh "python setup.py build --mpi=mympi"
+    ssh "python setup.py install"
+    
+    # clean 
+    cd ".."
+    rm_rf "#{base}"
+end
+
 desc "install all packages [$HOME/hpgc]"
 task :install,[:output] do |t,args|
     Rake::Task['simple'].invoke('mpi',args.output)
     Rake::Task['simple'].reenable
     
-    Rake::Task['simple'].invoke('gprotobuf',args.output)
-    Rake::Task['simple'].reenable
+    Rake::Task['mpi4py'].invoke(args.output)
+    Rake::Task['mpi4py'].reenable
     
-    Rake::Task['gflags'].invoke(args.output)
-    Rake::Task['gmock'].invoke(args.output)
+    #Rake::Task['simple'].invoke('gprotobuf',args.output)
+    #Rake::Task['simple'].reenable
     
-    Rake::Task['simple'].invoke('glog',args.output)
-    Rake::Task['simple'].reenable
+    #Rake::Task['gflags'].invoke(args.output)
+    #Rake::Task['gmock'].invoke(args.output)
     
-    Rake::Task['simple'].invoke('geos',args.output)
-    Rake::Task['simple'].reenable
+    #Rake::Task['simple'].invoke('glog',args.output)
+    #Rake::Task['simple'].reenable
     
-    Rake::Task['simple'].invoke('proj',args.output)
-    Rake::Task['simple'].reenable
+    #Rake::Task['simple'].invoke('geos',args.output)
+    #Rake::Task['simple'].reenable
     
-    Rake::Task['postgresql'].invoke(args.output)
-    Rake::Task['gdal'].invoke(args.output)
+    #Rake::Task['simple'].invoke('proj',args.output)
+    #Rake::Task['simple'].reenable
     
-    Rake::Task['postgis'].invoke(args.output)
+    #Rake::Task['postgresql'].invoke(args.output)
+    #Rake::Task['gdal'].invoke(args.output)
     
-    Rake::Task['boost'].invoke(args.output)
+    #Rake::Task['postgis'].invoke(args.output)
+    
+    #Rake::Task['boost'].invoke(args.output)
 end
 
 desc "update project"

@@ -8,11 +8,19 @@ This bundler include gdal, geos, proj4, postgis, postgresql, protobuf, openmpi a
 
 then `cd hpgc_bundler`
 
+type `gem install inifile`
+
 type `rake -T`
 
-type `rake install[you/path]`
+type `rake install[your/path]`
 
 ## change log
+
+* 20150320_2105
+
+```
+add mpi4py
+```
 
 * 20141129_1250
 
